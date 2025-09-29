@@ -1,0 +1,6 @@
+#ifndef LVGL_SCREEN_SETTINGS_NETWORK_H
+#define LVGL_SCREEN_SETTINGS_NETWORK_H
+
+void setup_network_setting();
+
+#endif //LVGL_SCREEN_SETTINGS_NETWORK_H

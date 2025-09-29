@@ -1,0 +1,6 @@
+#ifndef LVGL_SCREEN_SETTINGS_ABOUT_H
+#define LVGL_SCREEN_SETTINGS_ABOUT_H
+
+void setup_settings_about();
+
+#endif //LVGL_SCREEN_SETTINGS_ABOUT_H

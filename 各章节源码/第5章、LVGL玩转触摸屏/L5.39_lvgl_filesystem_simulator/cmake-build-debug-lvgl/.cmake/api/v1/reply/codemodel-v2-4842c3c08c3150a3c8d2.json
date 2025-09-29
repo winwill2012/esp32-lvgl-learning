@@ -1,0 +1,126 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.13"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						4,
+						5
+					]
+				},
+				{
+					"build" : "lvgl",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-lvgl-Debug-406f0f99916e3373ad21.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12.4"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "lvgl",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0,
+						1
+					],
+					"name" : "lvgl",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 1,
+					"id" : "lvgl::@b16ffba5fedc7c547903",
+					"jsonFile" : "target-lvgl-Debug-a59aafa8b895c2fc1266.json",
+					"name" : "lvgl",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "lvgl_demos::@b16ffba5fedc7c547903",
+					"jsonFile" : "target-lvgl_demos-Debug-92b0f721eb0a47872bf7.json",
+					"name" : "lvgl_demos",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "lvgl_examples::@b16ffba5fedc7c547903",
+					"jsonFile" : "target-lvgl_examples-Debug-360428d0638103023785.json",
+					"name" : "lvgl_examples",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "lvgl_thorvg::@b16ffba5fedc7c547903",
+					"jsonFile" : "target-lvgl_thorvg-Debug-df97c9f3ee4c216c4802.json",
+					"name" : "lvgl_thorvg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "main::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-main-Debug-c47579601d7ee5fa97a4.json",
+					"name" : "main",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "run::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-run-Debug-d2114f4f74a2290a6aef.json",
+					"name" : "run",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "E:/arduino-xiaozhi-course/L60_lvgl_filesystem_simulator/cmake-build-debug-lvgl",
+		"source" : "E:/arduino-xiaozhi-course/L60_lvgl_filesystem_simulator"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

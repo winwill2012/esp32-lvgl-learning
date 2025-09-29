@@ -1,0 +1,1 @@
+-I"D:/mingw64/x86_64-w64-mingw32/include/SDL2" -isystem "E:/arduino-xiaozhi-course/L57_lvgl_anim" -isystem "E:/arduino-xiaozhi-course/L57_lvgl_anim/lvgl" -isystem "E:/arduino-xiaozhi-course/L57_lvgl_anim/lvgl/examples" -isystem "E:/arduino-xiaozhi-course/L57_lvgl_anim/cmake-build-debug-lvgl/lvgl" -isystem "E:/arduino-xiaozhi-course/L57_lvgl_anim/lvgl/demos"
