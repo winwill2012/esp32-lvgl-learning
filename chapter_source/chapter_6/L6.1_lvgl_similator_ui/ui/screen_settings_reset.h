@@ -1,0 +1,6 @@
+#ifndef LVGL_SCREEN_SETTINGS_RESET_H
+#define LVGL_SCREEN_SETTINGS_RESET_H
+
+void setup_settings_reset();
+
+#endif //LVGL_SCREEN_SETTINGS_RESET_H
