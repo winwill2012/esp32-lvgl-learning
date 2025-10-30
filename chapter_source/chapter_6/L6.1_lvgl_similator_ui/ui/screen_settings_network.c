@@ -2,49 +2,6 @@
 #include "lvgl.h"
 #include "gui.h"
 
-void anim_exec_cb(void *obj, int32_t x) {
-    lv_obj_set_style_transform_rotation(obj, x, 0);
-}
-
-static int32_t refresh_image_angle = 0;
-static bool loading_wifi = false;
-
-void wifi_item_event_callback(lv_event_t *event) {
-    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
-        lv_obj_t *clicked_item = lv_event_get_target(event);
-        lv_ui.clicked_wifi_name = lv_list_get_button_text(lv_ui.menu_network_page_wifi_list, clicked_item);
-        char title[100];
-        lv_snprintf(title, sizeof(title), "请输入%s密码", lv_ui.clicked_wifi_name);
-        lv_label_set_text(lv_ui.menu_network_page_password_tips_label, title);
-        lv_textarea_set_text(lv_ui.menu_network_page_password_textarea, "");
-        lv_obj_remove_flag(lv_ui.menu_network_page_keyboard_mask, LV_OBJ_FLAG_HIDDEN);
-    }
-}
-
-void load_wifi_info_timer_cb(lv_timer_t *timer) {
-    refresh_image_angle = (refresh_image_angle + 100) % 3600;
-    lv_obj_set_style_transform_rotation(lv_ui.menu_network_page_wifi_list_loading_image, refresh_image_angle, 0);
-    if (refresh_image_angle == 1000) {
-        lv_obj_add_flag(lv_ui.menu_network_page_wifi_list_loading_image, LV_OBJ_FLAG_HIDDEN);
-        refresh_image_angle = 0;
-        loading_wifi = false;
-        for (int i = 0; i < 10; i++) {
-            char wifi_name[50];
-            lv_snprintf(wifi_name, sizeof(wifi_name), "wifi%d", i);
-            lv_obj_t *item = lv_list_add_button(lv_ui.menu_network_page_wifi_list, LV_CUSTOM_SYMBOL_WIFI, wifi_name);
-            lv_obj_add_event_cb(item, wifi_item_event_callback, LV_EVENT_CLICKED, NULL);
-        }
-        lv_timer_delete(timer);
-    }
-}
-
-void hide_mast_event_callback(lv_event_t *event) {
-    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
-        lv_obj_add_flag(lv_ui.menu_network_page_keyboard_mask, LV_OBJ_FLAG_HIDDEN);
-    }
-}
-
-
 void setup_network_setting() {
     lv_ui.menu_network_page = lv_menu_page_create(lv_ui.menu, "网络设置");
 

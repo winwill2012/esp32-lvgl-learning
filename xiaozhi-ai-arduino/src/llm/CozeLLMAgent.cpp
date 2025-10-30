@@ -52,6 +52,7 @@ void CozeLLMAgent::chat(const String &input) {
     std::string requestBodyStr;
     serializeJson(requestBody, requestBodyStr);
     const int httpResponseCode = http.POST(requestBodyStr.c_str());
+    ESP_LOGI(TAG, "bot_id = %s, httpResponseCode=%d", personaMap[Settings::getCurrentPersona().c_str()], httpResponseCode);
     if (httpResponseCode > 0) {
         // 开始调用智能体接口就创建TTS连接，提高语音合成相应速度
         Application::tts()->connect();
@@ -65,6 +66,7 @@ void CozeLLMAgent::chat(const String &input) {
             }
             line = stream->readStringUntil('\n');
             if (!line.isEmpty()) {
+                ESP_LOGD(TAG, "%s", line.c_str());
                 // 表示大模型回复已经完全结束
                 if (line.compareTo("event:conversation.message.completed") == 0
                     && lastEvent.compareTo("event:conversation.message.delta") == 0) {
