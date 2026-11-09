@@ -13,8 +13,7 @@ double Settings::currentSpeakSpeedRatio;
 double Settings::currentSpeakVolumeRatio;
 std::map<std::string, std::string> Settings::voiceMap = std::map<std::string, std::string>(); // <声音，声音值>列表
 std::map<std::string, std::string> Settings::personaMap = std::map<std::string, std::string>(); // <人设，botId>列表
-std::string Settings::doubaoAppId;
-std::string Settings::doubaoAccessToken;
+std::string Settings::doubaoApiKey;
 std::string Settings::cozeToken;
 std::string Settings::wifiSsid;
 std::string Settings::wifiPassword;
@@ -50,8 +49,7 @@ void Settings::begin() {
     currentScreenBrightness = preferences.getInt(SETTING_SCREEN_BRIGHTNESS, 80);
     preferences.end();
 
-    doubaoAppId = doc["doubao"]["appId"].as<std::string>();
-    doubaoAccessToken = doc["doubao"]["accessToken"].as<std::string>();
+    doubaoApiKey = doc["doubao"]["apiKey"].as<std::string>();
     cozeToken = doc["coze"]["token"].as<std::string>();
     const JsonArray voiceListJsonArray = doc["voiceList"].as<JsonArray>();
     for (JsonObject item: voiceListJsonArray) {
@@ -83,9 +81,9 @@ void Settings::show() {
     ESP_LOGI(TAG, "  当前语速: %f", currentSpeakSpeedRatio);
     ESP_LOGI(TAG, "  当前音色: %s", currentVoice.c_str());
     ESP_LOGI(TAG, "  当前性格: %s", currentPersona.c_str());
-    ESP_LOGI(TAG, "豆包AppId: %s", doubaoAppId.c_str());
-    ESP_LOGI(TAG, "豆包Token: %s", doubaoAccessToken.c_str());
-    ESP_LOGI(TAG, "扣子Token: %s", cozeToken.c_str());
+    // 凭据只在日志里显示是否已配置，不打印内容
+    ESP_LOGI(TAG, "豆包API Key: %s", doubaoApiKey.empty() ? "未配置" : "已配置");
+    ESP_LOGI(TAG, "扣子Token: %s", cozeToken.empty() ? "未配置" : "已配置");
     ESP_LOGI(TAG, "WiFi Sid: %s", wifiSsid.c_str());
     ESP_LOGI(TAG, " WiFi密码: %s", wifiPassword.c_str());
     ESP_LOGI(TAG, "-------------------------------------------------------------------");
@@ -158,12 +156,8 @@ std::map<std::string, std::string> Settings::getPersonaMap() {
     return personaMap;
 }
 
-std::string Settings::getDoubaoAppId() {
-    return doubaoAppId;
-}
-
-std::string Settings::getDoubaoAccessToken() {
-    return doubaoAccessToken;
+std::string Settings::getDoubaoApiKey() {
+    return doubaoApiKey;
 }
 
 std::string Settings::getCozeToken() {

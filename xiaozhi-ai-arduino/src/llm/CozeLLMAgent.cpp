@@ -60,9 +60,9 @@ void CozeLLMAgent::chat(const String &input) {
         WiFiClient *stream = http.getStreamPtr();
         String line = "";
         while (stream->connected() || stream->available()) {
-            // 等待数据流有新的数据可读
+            // 等待数据流有新的数据可读（轮询粒度要小，否则每条 delta 都会多等最多 10ms）
             while (!stream->available()) {
-                vTaskDelay(pdMS_TO_TICKS(10));
+                vTaskDelay(pdMS_TO_TICKS(2));
             }
             line = stream->readStringUntil('\n');
             if (!line.isEmpty()) {
@@ -74,9 +74,23 @@ void CozeLLMAgent::chat(const String &input) {
                     ESP_LOGI(TAG, "命令: %s", _command.c_str());
                     ESP_LOGI(TAG, "参数: %s", _params.c_str());
                     ESP_LOGI(TAG, "回复: %s", _response.c_str());
+                    // 兜底：如果格式异常导致回复为空、但参数里有文本，就把文本当回复念出来
+                    if (_ttsTextBuffer.isEmpty() && _response.isEmpty()
+                        && _command.equalsIgnoreCase("chat") && !_params.isEmpty()) {
+                        ESP_LOGW(TAG, "回复格式异常，把参数当回复处理: %s", _params.c_str());
+                        _response = _params;
+                        _ttsTextBuffer = _params;
+                        LvglDisplay::updateChatText(_firstPacket, _response.c_str());
+                        _firstPacket = false;
+                    }
                     if (_ttsTextBuffer != "") {
                         ESP_LOGI(TAG, "最后一条消息，继续语音合成: %s", _ttsTextBuffer.c_str());
                         Application::tts()->synth(_ttsTextBuffer, true);
+                    } else if (_response.isEmpty()) {
+                        // 什么都没说，别把状态永远停在"思考中"
+                        ESP_LOGW(TAG, "没有可合成的回复内容");
+                        GlobalState::setState(Sleep);
+                        Application::tts()->disconnect();
                     } else {
                         Application::tts()->disconnect();
                     }
@@ -129,6 +143,16 @@ void CozeLLMAgent::processContent(String &content) {
     if (content.isEmpty()) {
         return;
     }
+
+    // 容错：chat 指令的 params 按约定恒为空，但模型偶尔会漏一个 '|'，
+    // 输出成 "chat|回复内容|" 而不是 "chat||回复内容|"。
+    // 这时下一个字符不是分隔符，就直接跳过空的 params 字段，
+    // 否则整段回复会被当成参数吞掉，_response 为空、TTS 就没东西可念了。
+    if (_state == CommandCompleted && _command.equalsIgnoreCase("chat")
+        && content.indexOf(DELIMITER) < 0) {
+        stateTransfer(_state, Delimiter);
+    }
+
     const int index = content.indexOf(DELIMITER);
     // 如果不包含分隔符，状态不会发生变化
     if (index < 0) {

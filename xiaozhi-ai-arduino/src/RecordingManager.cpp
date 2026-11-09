@@ -32,27 +32,36 @@ RecordingManager::RecordingManager() {
 
 [[noreturn]] void consumeBufferedData(void *arg) {
     size_t pxItemSize;
-    bool firstPacket = true;
-    auto lastPacketBuff = std::vector<uint8_t>();
-    lastPacketBuff.push_back(0);
+    // 本段录音是否已经开过 ASR 会话（对应 recognize 的 firstPacket = !sessionOpen）
+    bool sessionOpen = false;
+    TickType_t lastAudioTick = xTaskGetTickCount();
+    // 最后一包只是“音频结束”的标记，payload 留空即可。
+    // 注意别塞 1 个字节：16bit PCM 的字节数必须是偶数，否则服务端会报 55000000 internal error
+    const auto lastPacketBuff = std::vector<uint8_t>();
+
     while (true) {
+        // 轮询间隔要小：松手后要尽快发结束包
         auto *buffer = static_cast<uint8_t *>(
                 xRingbufferReceive(Application::recordingManager()->getRingBuffer(),
-                                   &pxItemSize, pdMS_TO_TICKS(500))
+                                   &pxItemSize, pdMS_TO_TICKS(20))
         );
-        if (buffer == nullptr) {
-            if (!firstPacket) {
-                Application::asr()->recognize(DoubaoASRTask(lastPacketBuff, firstPacket, true));
-                firstPacket = true;
-            }
-        } else {
+        if (buffer != nullptr) {
             Application::asr()->recognize(DoubaoASRTask(
                     std::vector<uint8_t>(buffer, buffer + pxItemSize),
-                    firstPacket, false));
-            if (firstPacket) {
-                firstPacket = false;
-            }
+                    !sessionOpen, false));
+            sessionOpen = true;
+            lastAudioTick = xTaskGetTickCount();
             vRingbufferReturnItem(Application::recordingManager()->getRingBuffer(), buffer);
+        } else if (sessionOpen) {
+            // 这里是“按住说话”：松开按钮（状态离开 Listening）就代表说完了，
+            // 不必再等 500ms 静音超时，直接发结束包。
+            const bool released = GlobalState::getState() != Listening;
+            // 兜底：万一状态没切走，长时间没有新音频也收尾
+            const bool idle = static_cast<int32_t>(xTaskGetTickCount() - lastAudioTick) > pdMS_TO_TICKS(3000);
+            if (released || idle) {
+                Application::asr()->recognize(DoubaoASRTask(lastPacketBuff, false, true));
+                sessionOpen = false;
+            }
         }
         vTaskDelay(1);
     }

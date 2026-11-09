@@ -49,9 +49,7 @@ public:
 
     static std::map<std::string, std::string> getPersonaMap();
 
-    static std::string getDoubaoAppId();
-
-    static std::string getDoubaoAccessToken();
+    static std::string getDoubaoApiKey();
 
     static std::string getCozeToken();
 
@@ -78,8 +76,7 @@ private:
 
     static std::map<std::string, std::string> voiceMap; // <声音，声音值>
     static std::map<std::string, std::string> personaMap; // <人设，botId>
-    static std::string doubaoAppId;
-    static std::string doubaoAccessToken;
+    static std::string doubaoApiKey;
     static std::string cozeToken;
     static std::vector<WifiInfo> scannedWifiList; // 已扫描的wifi列表
     static std::string wifiSsid;
